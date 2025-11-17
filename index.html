@@ -5,73 +5,101 @@
   <title>Org Affiliation Lookup Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
+    :root {
+      --bg: #121212;
+      --panel: #1e1e1e;
+      --border: #333;
+      --text: #e0e0e0;
+      --accent: #4caf50;
     }
 
-    /* Floating wrench tab */
-    .wrench-tab {
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    /* Floating tools tab (right, near top; aligns visually with typical page headers) */
+    .tools-tab {
       position: fixed;
       top: 20px;
       right: 16px;
       z-index: 2000;
     }
-    .wrench-btn {
+
+    /* Trigger button with Unicode hammer-and-pick that morphs to X */
+    .tools-btn {
       background: none;
       border: none;
       cursor: pointer;
-      color: #4caf50;
-      padding: 6px 8px;
-      display: flex;
+      padding: 6px 10px;
+      display: inline-flex;
       align-items: center;
-      border-radius: 8px;
-      transition: color 0.25s ease, background-color 0.25s ease;
+      gap: 8px;
+      border-radius: 10px;
+      color: var(--accent);
+      transition: background-color 0.25s ease, color 0.25s ease;
+      user-select: none;
     }
-    .wrench-btn.open {
+    .tools-btn.open {
       color: #fff;
-      background-color: rgba(76, 175, 80, 0.15);
+      background-color: rgba(76, 175, 80, 0.18);
     }
-    .wrench-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
+    .tools-icon {
+      font-size: 22px; /* ensures legibility across devices */
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.3s ease, opacity 0.2s ease;
+      will-change: transform, opacity;
+    }
+    /* Subtle spin on open/close for dimensional feel */
+    .tools-btn.open .tools-icon {
+      transform: rotate(180deg);
+    }
+    .tools-label {
+      font-weight: 600;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    @media (max-width: 768px) {
+      .tools-label { display: none; } /* keep compact on mobile */
     }
 
-    /* Slide-out menu */
+    /* Slide-out menu (compact overlay) */
     .slideout {
       position: fixed;
       top: 0;
-      right: -260px;
+      right: -260px; /* hidden off-screen */
       width: 240px;
       height: 100%;
-      background-color: #1e1e1e;
-      border-left: 1px solid #333;
+      background-color: var(--panel);
+      border-left: 1px solid var(--border);
       box-shadow: -4px 0 8px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       transition: right 0.3s ease;
-      z-index: 1500;
+      z-index: 1500; /* above iframe */
     }
     .slideout.open { right: 0; }
 
     .slideout-header {
       padding: 12px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border);
       font-weight: 700;
     }
 
     .slideout a {
       padding: 12px;
-      color: #e0e0e0;
+      color: var(--text);
       text-decoration: none;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.15s ease;
     }
     .slideout a:hover { background-color: #333; }
     .slideout a:last-child { border-bottom: none; }
 
+    /* Iframe area fills the page */
     .iframe-container {
       width: 100%;
       height: 100vh;
@@ -82,19 +110,19 @@
       border: none;
     }
 
+    /* Mobile: widen panel for touch targets */
     @media (max-width: 768px) {
-      .slideout { width: 80%; }
+      .slideout { width: 80%; right: -82%; }
+      .slideout.open { right: 0; }
     }
   </style>
 </head>
 <body>
-  <!-- Floating wrench tab -->
-  <div class="wrench-tab">
-    <button class="wrench-btn" id="wrenchBtn" onclick="toggleMenu()" title="Useful Tools">
-      <!-- Proper wrench SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <path d="M481.2 320.6l-136.7-136.7c-7.6-7.6-19.9-7.6-27.5 0l-27.5 27.5c-7.6 7.6-7.6 19.9 0 27.5l136.7 136.7c7.6 7.6 19.9 7.6 27.5 0l27.5-27.5c7.6-7.6 7.6-19.9 0-27.5zM224 96c0-53-43-96-96-96S32 43 32 96c0 53 43 96 96 96s96-43 96-96z"/>
-      </svg>
+  <!-- Floating tools tab -->
+  <div class="tools-tab">
+    <button class="tools-btn" id="toolsBtn" aria-expanded="false" aria-controls="slideoutMenu" title="Useful Tools">
+      <span class="tools-icon" id="toolsIcon">⚒</span>
+      <span class="tools-label">Tools</span>
     </button>
   </div>
 
@@ -114,32 +142,57 @@
 
   <script>
     const menu = document.getElementById('slideoutMenu');
-    const wrenchBtn = document.getElementById('wrenchBtn');
+    const btn = document.getElementById('toolsBtn');
+    const icon = document.getElementById('toolsIcon');
 
-    function toggleMenu() {
-      menu.classList.toggle('open');
-      wrenchBtn.classList.toggle('open');
-      menu.setAttribute('aria-hidden', menu.classList.contains('open') ? 'false' : 'true');
+    function openMenu() {
+      menu.classList.add('open');
+      menu.setAttribute('aria-hidden', 'false');
+      btn.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+
+      // Morph: hammer-and-pick (⚒) -> X (✕) with subtle spin handled via CSS
+      icon.textContent = '✕';
     }
 
     function closeMenu() {
       menu.classList.remove('open');
-      wrenchBtn.classList.remove('open');
       menu.setAttribute('aria-hidden', 'true');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+
+      // Reverse morph: X (✕) -> hammer-and-pick (⚒)
+      icon.textContent = '⚒';
     }
+
+    function toggleMenu() {
+      if (menu.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    // Click behavior on the button itself
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // keep outside-click handler from immediately closing it
+      toggleMenu();
+    });
 
     // Close menu when a link is clicked
     document.querySelectorAll('#slideoutMenu a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close menu if clicking outside (anywhere not wrench or menu)
+    // Close menu when clicking anywhere outside the panel or the tools button (including iframe area)
     document.addEventListener('click', function(event) {
-      const clickedOutside = !menu.contains(event.target) && !wrenchBtn.contains(event.target);
-      if (menu.classList.contains('open') && clickedOutside) closeMenu();
+      const clickedOutside = !menu.contains(event.target) && !btn.contains(event.target);
+      if (menu.classList.contains('open') && clickedOutside) {
+        closeMenu();
+      }
     });
 
-    // Close on Escape
+    // Close on Escape for keyboard users
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });
