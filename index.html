@@ -32,14 +32,14 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 6px 10px;
+      padding: 8px 12px;
       display: inline-flex;
       align-items: center;
       border-radius: 10px;
       color: var(--accent);
       transition: background-color 0.25s ease, color 0.25s ease;
       user-select: none;
-      font-size: 22px;
+      font-size: 28px; /* bigger icon size */
     }
     .tools-btn.open {
       color: #fff;
@@ -50,8 +50,8 @@
     .slideout {
       position: fixed;
       top: 0;
-      right: -260px;
-      width: 240px;
+      right: -280px;
+      width: 260px;
       height: 100%;
       background-color: var(--panel);
       border-left: 1px solid var(--border);
@@ -67,18 +67,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px;
+      padding: 16px; /* larger header padding */
       border-bottom: 1px solid var(--border);
       font-weight: 700;
-      font-size: 16px;
+      font-size: 18px; /* larger header text */
     }
 
+    .close-x {
+      cursor: pointer;
+      font-size: 24px; /* larger close button */
+      color: var(--text);
+      opacity: 0.9;
+      transition: opacity 0.2s ease;
+    }
+    .close-x:hover { opacity: 1; }
+
     .slideout a {
-      padding: 12px;
+      padding: 14px;
       color: var(--text);
       text-decoration: none;
       border-bottom: 1px solid var(--border);
       transition: background-color 0.15s ease;
+      font-size: 15px;
     }
     .slideout a:hover { background-color: #333; }
     .slideout a:last-child { border-bottom: none; }
@@ -111,7 +121,10 @@
 
   <!-- Slide-out menu -->
   <div id="slideoutMenu" class="slideout" aria-hidden="true">
-    <div class="slideout-header">Useful Tools</div>
+    <div class="slideout-header">
+      <span>Useful Tools</span>
+      <span class="close-x" onclick="closeMenu()" aria-label="Close">✕</span>
+    </div>
     <a href="https://dydrmr.github.io/VerseTime" target="_blank" rel="noopener">VerseTime</a>
     <a href="https://verseguide.com" target="_blank" rel="noopener">VerseGuide</a>
     <a href="https://erkul.games" target="_blank" rel="noopener">Erkul DPS Calculator</a>
@@ -151,18 +164,15 @@
       }
     }
 
-    // Click behavior on the button itself
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleMenu();
     });
 
-    // Close menu when a link is clicked
     document.querySelectorAll('#slideoutMenu a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close menu when clicking anywhere outside the panel or the tools button
     document.addEventListener('click', function(event) {
       const clickedOutside = !menu.contains(event.target) && !btn.contains(event.target);
       if (menu.classList.contains('open') && clickedOutside) {
@@ -170,7 +180,6 @@
       }
     });
 
-    // Close on Escape
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });
