@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Org Affiliation Lookup Tool</title>
+  <title>Org Recon Tools</title>
   <style>
     body {
       margin: 0;
@@ -38,35 +38,41 @@
       border-radius: 2px;
     }
 
-    /* Dropdown menu */
-    .dropdown {
-      position: absolute;
+    /* Slide-out menu */
+    .slideout {
+      position: fixed;
       top: 48px; /* below toolbar */
-      left: 12px;
+      right: -240px; /* hidden off-screen */
+      width: 240px;
+      height: calc(100vh - 48px);
       background-color: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 4px;
-      display: none;
+      border-left: 1px solid #333;
+      box-shadow: -4px 0 8px rgba(0,0,0,0.5);
+      display: flex;
       flex-direction: column;
-      min-width: 200px;
+      transition: right 0.3s ease;
+      z-index: 2000; /* sits above iframe */
     }
-    .dropdown a {
-      padding: 10px;
+    .slideout.open {
+      right: 0; /* slide in */
+    }
+    .slideout a {
+      padding: 12px;
       color: #e0e0e0;
       text-decoration: none;
       border-bottom: 1px solid #333;
     }
-    .dropdown a:hover {
+    .slideout a:hover {
       background-color: #333;
     }
-    .dropdown a:last-child {
+    .slideout a:last-child {
       border-bottom: none;
     }
 
     /* Iframe area */
     .iframe-container {
       width: 100%;
-      height: calc(100vh - 48px); /* full height minus toolbar */
+      height: calc(100vh - 48px);
     }
     .iframe-container iframe {
       width: 100%;
@@ -85,8 +91,8 @@
     </div>
   </div>
 
-  <!-- Dropdown menu -->
-  <div id="dropdownMenu" class="dropdown">
+  <!-- Slide-out menu -->
+  <div id="slideoutMenu" class="slideout">
     <a href="https://dydrmr.github.io/VerseTime" target="_blank">VerseTime</a>
     <a href="https://verseguide.com" target="_blank">VerseGuide</a>
     <a href="https://erkul.games" target="_blank">Erkul DPS Calculator</a>
@@ -94,42 +100,26 @@
   </div>
 
   <!-- Iframe content -->
-  <div class="iframe-container">
+  <div class="iframe-container" onclick="closeMenu()">
     <iframe src="https://script.google.com/macros/s/AKfycby52em9GDzV8BIluwUeDBMbfm7gr6jPGhAYaAxCrAHljSfXmyqD2OIppwWisjh9vqabjQ/exec"></iframe>
   </div>
 
-<script>
-  function toggleMenu() {
-    const menu = document.getElementById('dropdownMenu');
-    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-  }
-
-  function closeMenu() {
-    document.getElementById('dropdownMenu').style.display = 'none';
-  }
-
-  // Close menu if clicking outside
-  document.addEventListener('click', function(event) {
-    const menu = document.getElementById('dropdownMenu');
-    const hamburger = document.querySelector('.hamburger');
-    if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-      closeMenu();
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('slideoutMenu');
+      menu.classList.toggle('open');
     }
-  });
 
-  // Close menu when a link is clicked
-  document.querySelectorAll('#dropdownMenu a').forEach(link => {
-    link.addEventListener('click', () => {
-      closeMenu();
+    function closeMenu() {
+      document.getElementById('slideoutMenu').classList.remove('open');
+    }
+
+    // Close menu when a link is clicked
+    document.querySelectorAll('#slideoutMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenu();
+      });
     });
-  });
-
-  // Close menu when iframe itself is clicked
-  const iframe = document.querySelector('.iframe-container iframe');
-  iframe.addEventListener('mousedown', () => {
-    closeMenu();
-  });
-</script>
+  </script>
 </body>
 </html>
-
