@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Org Lookup Tool</title>
+  <title>Org Affiliation Lookup Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       margin: 0;
@@ -14,23 +15,24 @@
     /* Floating wrench tab */
     .wrench-tab {
       position: fixed;
-      top: 20px; /* visually aligned near top */
+      top: 20px;
       right: 16px;
       z-index: 2000;
     }
-
     .wrench-btn {
       background: none;
       border: none;
       cursor: pointer;
       color: #4caf50;
-      padding: 4px;
+      padding: 6px 8px;
       display: flex;
       align-items: center;
-      transition: color 0.3s ease;
+      border-radius: 8px;
+      transition: color 0.25s ease, background-color 0.25s ease;
     }
     .wrench-btn.open {
-      color: #fff; /* white when active */
+      color: #fff;
+      background-color: rgba(76, 175, 80, 0.15);
     }
     .wrench-btn svg {
       width: 24px;
@@ -38,11 +40,11 @@
       fill: currentColor;
     }
 
-    /* Slide-out menu panel */
+    /* Slide-out menu */
     .slideout {
       position: fixed;
       top: 0;
-      right: -260px; /* hidden off-screen */
+      right: -260px;
       width: 240px;
       height: 100%;
       background-color: #1e1e1e;
@@ -53,15 +55,12 @@
       transition: right 0.3s ease;
       z-index: 1500;
     }
-    .slideout.open {
-      right: 0;
-    }
+    .slideout.open { right: 0; }
 
-    /* Header inside slideout */
     .slideout-header {
       padding: 12px;
       border-bottom: 1px solid #333;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .slideout a {
@@ -70,14 +69,9 @@
       text-decoration: none;
       border-bottom: 1px solid #333;
     }
-    .slideout a:hover {
-      background-color: #333;
-    }
-    .slideout a:last-child {
-      border-bottom: none;
-    }
+    .slideout a:hover { background-color: #333; }
+    .slideout a:last-child { border-bottom: none; }
 
-    /* Iframe area */
     .iframe-container {
       width: 100%;
       height: 100vh;
@@ -88,11 +82,8 @@
       border: none;
     }
 
-    /* Mobile adjustments */
-    @media (max-width: 600px) {
-      .slideout {
-        width: 70%;
-      }
+    @media (max-width: 768px) {
+      .slideout { width: 80%; }
     }
   </style>
 </head>
@@ -100,7 +91,7 @@
   <!-- Floating wrench tab -->
   <div class="wrench-tab">
     <button class="wrench-btn" id="wrenchBtn" onclick="toggleMenu()" title="Useful Tools">
-      <!-- Proper wrench icon -->
+      <!-- Proper wrench SVG -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
         <path d="M481.2 320.6l-136.7-136.7c-7.6-7.6-19.9-7.6-27.5 0l-27.5 27.5c-7.6 7.6-7.6 19.9 0 27.5l136.7 136.7c7.6 7.6 19.9 7.6 27.5 0l27.5-27.5c7.6-7.6 7.6-19.9 0-27.5zM224 96c0-53-43-96-96-96S32 43 32 96c0 53 43 96 96 96s96-43 96-96z"/>
       </svg>
@@ -108,12 +99,12 @@
   </div>
 
   <!-- Slide-out menu -->
-  <div id="slideoutMenu" class="slideout">
+  <div id="slideoutMenu" class="slideout" aria-hidden="true">
     <div class="slideout-header">Useful Tools</div>
-    <a href="https://dydrmr.github.io/VerseTime" target="_blank">VerseTime</a>
-    <a href="https://verseguide.com" target="_blank">VerseGuide</a>
-    <a href="https://erkul.games" target="_blank">Erkul DPS Calculator</a>
-    <a href="https://starcitizen.tools" target="_blank">StarCitizen.Tools Wiki</a>
+    <a href="https://dydrmr.github.io/VerseTime" target="_blank" rel="noopener">VerseTime</a>
+    <a href="https://verseguide.com" target="_blank" rel="noopener">VerseGuide</a>
+    <a href="https://erkul.games" target="_blank" rel="noopener">Erkul DPS Calculator</a>
+    <a href="https://starcitizen.tools" target="_blank" rel="noopener">StarCitizen.Tools Wiki</a>
   </div>
 
   <!-- Iframe content -->
@@ -122,32 +113,35 @@
   </div>
 
   <script>
+    const menu = document.getElementById('slideoutMenu');
+    const wrenchBtn = document.getElementById('wrenchBtn');
+
     function toggleMenu() {
-      const menu = document.getElementById('slideoutMenu');
-      const btn = document.getElementById('wrenchBtn');
       menu.classList.toggle('open');
-      btn.classList.toggle('open');
+      wrenchBtn.classList.toggle('open');
+      menu.setAttribute('aria-hidden', menu.classList.contains('open') ? 'false' : 'true');
     }
 
     function closeMenu() {
-      document.getElementById('slideoutMenu').classList.remove('open');
-      document.getElementById('wrenchBtn').classList.remove('open');
+      menu.classList.remove('open');
+      wrenchBtn.classList.remove('open');
+      menu.setAttribute('aria-hidden', 'true');
     }
 
     // Close menu when a link is clicked
     document.querySelectorAll('#slideoutMenu a').forEach(link => {
-      link.addEventListener('click', () => {
-        closeMenu();
-      });
+      link.addEventListener('click', closeMenu);
     });
 
     // Close menu if clicking outside (anywhere not wrench or menu)
     document.addEventListener('click', function(event) {
-      const menu = document.getElementById('slideoutMenu');
-      const btn = document.getElementById('wrenchBtn');
-      if (!menu.contains(event.target) && !btn.contains(event.target)) {
-        closeMenu();
-      }
+      const clickedOutside = !menu.contains(event.target) && !wrenchBtn.contains(event.target);
+      if (menu.classList.contains('open') && clickedOutside) closeMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
     });
   </script>
 </body>
