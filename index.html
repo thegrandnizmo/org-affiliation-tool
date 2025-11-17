@@ -124,9 +124,9 @@
     });
   });
 
-  // Close menu when iframe is clicked
-  const iframeContainer = document.querySelector('.iframe-container');
-  iframeContainer.addEventListener('click', () => {
+  // Close menu when iframe itself is clicked
+  const iframe = document.querySelector('.iframe-container iframe');
+  iframe.addEventListener('mousedown', () => {
     closeMenu();
   });
 </script>
