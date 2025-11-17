@@ -11,18 +11,19 @@
       color: #e0e0e0;
     }
 
-    /* Toolbar */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      background-color: #1e1e1e;
-      padding: 8px 12px;
-      border-bottom: 1px solid #333;
-      position: relative;
-      z-index: 1000;
+    h2 {
+      margin: 16px;
+      color: #fff;
     }
 
-    /* Hamburger button */
+    /* Floating hamburger tab */
+    .hamburger-tab {
+      position: fixed;
+      top: 16px; /* visually aligned with heading */
+      right: 16px;
+      z-index: 2000;
+    }
+
     .hamburger {
       cursor: pointer;
       width: 30px;
@@ -30,31 +31,44 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: transform 0.3s ease;
     }
     .hamburger span {
       display: block;
       height: 4px;
       background-color: #e0e0e0;
       border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+      background-color: #fff;
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+      background-color: #fff;
     }
 
-    /* Slide-out menu */
+    /* Slide-out menu panel */
     .slideout {
       position: fixed;
-      top: 48px; /* below toolbar */
-      right: -240px; /* hidden off-screen */
-      width: 240px;
-      height: calc(100vh - 48px);
+      top: 0;
+      right: -220px; /* hidden off-screen */
+      width: 200px;
+      height: 100%;
       background-color: #1e1e1e;
       border-left: 1px solid #333;
       box-shadow: -4px 0 8px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       transition: right 0.3s ease;
-      z-index: 2000; /* sits above iframe */
+      z-index: 1500;
     }
     .slideout.open {
-      right: 0; /* slide in */
+      right: 0;
     }
     .slideout a {
       padding: 12px;
@@ -79,12 +93,21 @@
       height: 100%;
       border: none;
     }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      .slideout {
+        width: 70%; /* narrower screens get wider panel */
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="hamburger" onclick="toggleMenu()">
+  <h2>Org Affiliation Lookup Tool</h2>
+
+  <!-- Floating hamburger tab -->
+  <div class="hamburger-tab">
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span>
       <span></span>
       <span></span>
@@ -107,11 +130,14 @@
   <script>
     function toggleMenu() {
       const menu = document.getElementById('slideoutMenu');
+      const hamburger = document.getElementById('hamburger');
       menu.classList.toggle('open');
+      hamburger.classList.toggle('open');
     }
 
     function closeMenu() {
       document.getElementById('slideoutMenu').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
     }
 
     // Close menu when a link is clicked
@@ -119,6 +145,15 @@
       link.addEventListener('click', () => {
         closeMenu();
       });
+    });
+
+    // Close menu if clicking outside (anywhere not hamburger or menu)
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('slideoutMenu');
+      const hamburger = document.getElementById('hamburger');
+      if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+        closeMenu();
+      }
     });
   </script>
 </body>
