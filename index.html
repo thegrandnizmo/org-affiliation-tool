@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Org Affiliation Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Reset and full-viewport layout */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #121212; /* optional: match app theme */
+    }
+    /* Use a CSS variable to handle mobile browser UI and iOS quirks */
+    :root {
+      --vh: 1vh;
+    }
+    .fullscreen-frame {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: calc(var(--vh) * 100);
+      border: 0;
+    }
+    /* Fallback if JS is disabled */
+    noscript .fullscreen-frame {
+      height: 100vh;
+    }
+  </style>
+  <script>
+    // Dynamically set --vh to account for mobile browser UI chrome
+    function setViewportHeightVar() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setViewportHeightVar();
+    window.addEventListener('resize', setViewportHeightVar);
+  </script>
+</head>
+<body>
+  <iframe
+    class="fullscreen-frame"
+    src="https://script.google.com/macros/s/AKfycby5tDliGBy6qWtV6E78kJdXe4tialTMpH0fcxaEI-ejLPb-aS9NkiSKTheIGU1OAJWz3A/exec"
+    title="Org Affiliation Tool"
+    allow="fullscreen"
+    referrerpolicy="no-referrer"
+  ></iframe>
+
+  <noscript>
+    <iframe
+      class="fullscreen-frame"
+      src="https://script.google.com/macros/s/AKfycby5tDliGBy6qWtV6E78kJdXe4tialTMpH0fcxaEI-ejLPb-aS9NkiSKTheIGU1OAJWz3A/exec"
+      title="Org Affiliation Tool"
+    ></iframe>
+  </noscript>
+</body>
+</html>
