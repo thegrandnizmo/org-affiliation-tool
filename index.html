@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Org Affiliation Lookup Tool</title>
+  <title>Useful Tools Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -39,11 +39,19 @@
       color: var(--accent);
       transition: background-color 0.25s ease, color 0.25s ease;
       user-select: none;
-      font-size: 28px; /* bigger icon size */
+      font-size: 34px; /* larger icon */
     }
     .tools-btn.open {
       color: #fff;
       background-color: rgba(76, 175, 80, 0.18);
+    }
+
+    .tools-icon {
+      display: inline-block;
+      transition: transform 0.4s ease;
+    }
+    .tools-btn.open .tools-icon {
+      transform: rotate(180deg);
     }
 
     /* Slide-out menu */
@@ -64,23 +72,12 @@
     .slideout.open { right: 0; }
 
     .slideout-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px; /* larger header padding */
+      padding: 24px; /* taller header */
       border-bottom: 1px solid var(--border);
       font-weight: 700;
-      font-size: 18px; /* larger header text */
+      font-size: 20px; /* larger header text */
+      text-align: center;
     }
-
-    .close-x {
-      cursor: pointer;
-      font-size: 24px; /* larger close button */
-      color: var(--text);
-      opacity: 0.9;
-      transition: opacity 0.2s ease;
-    }
-    .close-x:hover { opacity: 1; }
 
     .slideout a {
       padding: 14px;
@@ -115,16 +112,13 @@
   <!-- Floating tools tab -->
   <div class="tools-tab">
     <button class="tools-btn" id="toolsBtn" aria-expanded="false" aria-controls="slideoutMenu" title="Useful Tools">
-      ⚒
+      <span class="tools-icon" id="toolsIcon">⚒</span>
     </button>
   </div>
 
   <!-- Slide-out menu -->
   <div id="slideoutMenu" class="slideout" aria-hidden="true">
-    <div class="slideout-header">
-      <span>Useful Tools</span>
-      <span class="close-x" onclick="closeMenu()" aria-label="Close">✕</span>
-    </div>
+    <div class="slideout-header">Useful Tools</div>
     <a href="https://dydrmr.github.io/VerseTime" target="_blank" rel="noopener">VerseTime</a>
     <a href="https://verseguide.com" target="_blank" rel="noopener">VerseGuide</a>
     <a href="https://erkul.games" target="_blank" rel="noopener">Erkul DPS Calculator</a>
@@ -139,13 +133,14 @@
   <script>
     const menu = document.getElementById('slideoutMenu');
     const btn = document.getElementById('toolsBtn');
+    const icon = document.getElementById('toolsIcon');
 
     function openMenu() {
       menu.classList.add('open');
       menu.setAttribute('aria-hidden', 'false');
       btn.classList.add('open');
       btn.setAttribute('aria-expanded', 'true');
-      btn.textContent = '✕'; // morph to X
+      icon.textContent = '✕'; // morph to X
     }
 
     function closeMenu() {
@@ -153,7 +148,7 @@
       menu.setAttribute('aria-hidden', 'true');
       btn.classList.remove('open');
       btn.setAttribute('aria-expanded', 'false');
-      btn.textContent = '⚒'; // morph back to hammer-and-pick
+      icon.textContent = '⚒'; // morph back to hammer-and-pick
     }
 
     function toggleMenu() {
