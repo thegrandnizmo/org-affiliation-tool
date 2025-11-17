@@ -98,21 +98,38 @@
     <iframe src="https://script.google.com/macros/s/AKfycby52em9GDzV8BIluwUeDBMbfm7gr6jPGhAYaAxCrAHljSfXmyqD2OIppwWisjh9vqabjQ/exec"></iframe>
   </div>
 
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById('dropdownMenu');
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('dropdownMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
 
-    // Close menu if clicking outside
-    document.addEventListener('click', function(event) {
-      const menu = document.getElementById('dropdownMenu');
-      const hamburger = document.querySelector('.hamburger');
-      if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-        menu.style.display = 'none';
-      }
+  function closeMenu() {
+    document.getElementById('dropdownMenu').style.display = 'none';
+  }
+
+  // Close menu if clicking outside
+  document.addEventListener('click', function(event) {
+    const menu = document.getElementById('dropdownMenu');
+    const hamburger = document.querySelector('.hamburger');
+    if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+      closeMenu();
+    }
+  });
+
+  // Close menu when a link is clicked
+  document.querySelectorAll('#dropdownMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      closeMenu();
     });
-  </script>
+  });
+
+  // Close menu when iframe is clicked
+  const iframeContainer = document.querySelector('.iframe-container');
+  iframeContainer.addEventListener('click', () => {
+    closeMenu();
+  });
+</script>
 </body>
 </html>
 
