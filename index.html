@@ -1,50 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Org Affiliation Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Org Affiliation Lookup Tool</title>
   <style>
-    /* Reset and full-viewport layout */
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      padding: 0;
-      background: #121212; /* optional: match app theme */
+      font-family: system-ui, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
     }
-    /* Use a CSS variable to handle mobile browser UI and iOS quirks */
-    :root {
-      --vh: 1vh;
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      background-color: #1e1e1e;
+      padding: 8px 12px;
+      border-bottom: 1px solid #333;
+      position: relative;
+      z-index: 1000;
     }
-    .fullscreen-frame {
-      position: fixed;
-      top: 0; left: 0;
+
+    /* Hamburger button */
+    .hamburger {
+      cursor: pointer;
+      width: 30px;
+      height: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hamburger span {
+      display: block;
+      height: 4px;
+      background-color: #e0e0e0;
+      border-radius: 2px;
+    }
+
+    /* Dropdown menu */
+    .dropdown {
+      position: absolute;
+      top: 48px; /* below toolbar */
+      left: 12px;
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 4px;
+      display: none;
+      flex-direction: column;
+      min-width: 200px;
+    }
+    .dropdown a {
+      padding: 10px;
+      color: #e0e0e0;
+      text-decoration: none;
+      border-bottom: 1px solid #333;
+    }
+    .dropdown a:hover {
+      background-color: #333;
+    }
+    .dropdown a:last-child {
+      border-bottom: none;
+    }
+
+    /* Iframe area */
+    .iframe-container {
       width: 100%;
-      height: calc(var(--vh) * 100);
-      border: 0;
+      height: calc(100vh - 48px); /* full height minus toolbar */
     }
-    /* Fallback if JS is disabled */
-    noscript .fullscreen-frame {
-      height: 100vh;
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
-  <script>
-    // Dynamically set --vh to account for mobile browser UI chrome
-    function setViewportHeightVar() {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    setViewportHeightVar();
-    window.addEventListener('resize', setViewportHeightVar);
-  </script>
 </head>
 <body>
-  <iframe
-    class="fullscreen-frame"
-    src="https://script.google.com/macros/s/AKfycby52em9GDzV8BIluwUeDBMbfm7gr6jPGhAYaAxCrAHljSfXmyqD2OIppwWisjh9vqabjQ/exec"
-    title="Org Affiliation Tool"
-    allow="fullscreen"
-    referrerpolicy="no-referrer"
-  ></iframe>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Dropdown menu -->
+  <div id="dropdownMenu" class="dropdown">
+    <a href="https://dydrmr.github.io/VerseTime" target="_blank">VerseTime</a>
+    <a href="https://verseguide.com" target="_blank">VerseGuide</a>
+    <a href="https://erkul.games" target="_blank">Erkul DPS Calculator</a>
+    <a href="https://starcitizen.tools" target="_blank">StarCitizen.Tools Wiki</a>
+  </div>
+
+  <!-- Iframe content -->
+  <div class="iframe-container">
+    <iframe src="https://script.google.com/macros/s/AKfycby52em9GDzV8BIluwUeDBMbfm7gr6jPGhAYaAxCrAHljSfXmyqD2OIppwWisjh9vqabjQ/exec"></iframe>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Close menu if clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('dropdownMenu');
+      const hamburger = document.querySelector('.hamburger');
+      if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
+        menu.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
+
