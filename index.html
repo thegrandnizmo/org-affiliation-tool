@@ -23,7 +23,7 @@
     /* Floating tools tab */
     .tools-tab {
       position: fixed;
-      top: 16px;
+      top: 60px; /* visually aligned with header text */
       right: 16px;
       z-index: 2000;
     }
@@ -39,7 +39,7 @@
       color: var(--accent);
       transition: background-color 0.25s ease, color 0.25s ease;
       user-select: none;
-      font-size: 36px; /* larger icon */
+      font-size: 38px; /* larger icon */
     }
     .tools-btn.open {
       color: #fff;
@@ -72,10 +72,10 @@
     .slideout.open { right: 0; }
 
     .slideout-header {
-      padding: 28px;
+      padding: 32px; /* taller header */
       border-bottom: 1px solid var(--border);
       font-weight: 700;
-      font-size: 22px;
+      font-size: 24px; /* larger header text */
       text-align: left;
     }
 
@@ -112,7 +112,7 @@
   <!-- Floating tools tab -->
   <div class="tools-tab">
     <button class="tools-btn" id="toolsBtn" aria-expanded="false" aria-controls="slideoutMenu" title="Useful Tools">
-      <span class="tools-icon" id="toolsIcon">⚒</span>
+      <span class="tools-icon" id="toolsIcon">&#x2692;&#xFE0E;</span> <!-- hammer-and-pick with text presentation -->
     </button>
   </div>
 
@@ -148,7 +148,7 @@
       menu.setAttribute('aria-hidden', 'true');
       btn.classList.remove('open');
       btn.setAttribute('aria-expanded', 'false');
-      icon.textContent = '⚒'; // morph back to hammer-and-pick
+      icon.textContent = '\u2692\uFE0E'; // morph back to hammer-and-pick (text style)
     }
 
     function toggleMenu() {
